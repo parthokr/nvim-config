@@ -22,6 +22,7 @@ function CompileAndRunCPP()
 		.. " "
 		.. current_file
 		.. " && "
+		.. "./"
 		.. current_file_name
 
 	vim.cmd(compile_command)
