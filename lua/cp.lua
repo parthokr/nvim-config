@@ -14,10 +14,12 @@ function CompileAndRunCPP()
 	-- compile
 	-- compile using homebrew g++
 	vim.cmd("echohl WarningMsg | echo '🚀  Compiling and running...' | echohl None")
-	local current_file_name = vim.fn.expand("%:r")
+	local current_file_path = vim.fn.expand("%:r")
+	-- split by / and get last element
+	current_file_name = vim.fn.split(current_file_path, "/")[#vim.fn.split(current_file_path, "/")]
 	local current_file_extension = vim.fn.expand("%:e")
 	local current_file = current_file_name .. "." .. current_file_extension
-	local compile_command = "!g++-13 -Wall -Wno-unused-result -std=c++17 -O2 -o "
+	local compile_command = "!g++-14 -Wall -Wno-unused-result -std=c++17 -O2 -o "
 		.. current_file_name
 		.. " "
 		.. current_file
@@ -26,6 +28,7 @@ function CompileAndRunCPP()
 		.. current_file_name
 
 	vim.cmd(compile_command)
+	-- print(current_file)
 
 	-- save end time
 	local finish = os.clock()
@@ -76,3 +79,20 @@ function ToggleDebug()
 end
 
 vim.keymap.set("n", "<leader>d", ToggleDebug, {})
+
+function GotoSolveFunction()
+	-- check if file is a cpp file
+	local allowed_filetypes = { "cpp", "cc", "cxx", "c++" }
+	local extension = vim.fn.expand("%:e")
+	if not vim.tbl_contains(allowed_filetypes, extension) then
+		print("❌  Not a C++ file")
+		return
+	end
+	-- find the solve function's line number globally
+	local solve_function = "solve"
+	local solve_line = vim.fn.search(solve_function, "nw")
+	-- go to the line
+	vim.cmd("normal " .. solve_line .. "G")
+end
+
+vim.keymap.set("n", "<leader>s", GotoSolveFunction, {})
